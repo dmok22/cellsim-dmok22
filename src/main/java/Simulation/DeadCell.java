@@ -15,7 +15,7 @@ public class DeadCell extends Cell{
      * @param coords
      */
     public DeadCell(Pair coords){
-        super(coords.getX(), coords.getY(), 3, 4, "DeadCell");
+        this(coords.getX(), coords.getY());
     }
     public DeadCell(int x, int y){
         super(x, y, 0, 0, "DeadCell");

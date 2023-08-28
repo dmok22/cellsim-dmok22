@@ -20,7 +20,7 @@ public class TissueCell extends Cell{
      * @param coords
      */
     public TissueCell(Pair coords){
-        super(coords.getX(), coords.getY(), 3, 4, "TissueCell");
+        this(coords.getX(), coords.getY());
     }
     public TissueCell(int x, int y){
         super(x, y, 0, 1, "TissueCell");
