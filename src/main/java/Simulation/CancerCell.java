@@ -1,6 +1,9 @@
 package Simulation;
 
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import Util.Pair;
 /**
  *This is a cancer cell. It is the most complex cell as it can attack tissue or immune cells, or grow into a dead cell.
  * For attacking tissue, it is a 1 hit replace it with a dead cell.
@@ -15,5 +18,62 @@ package Simulation;
  */
 
 public class CancerCell extends Cell{
+    public CancerCell(int x, int y){
+        super(x, y, 1, 3, "CancerCell");
+    }
+    private Random random = new Random();
 
+    public CancerCell(Pair pair) {
+    }
+    private int strength = getStrength();
+
+    public CancerCell(int x, int y, int strength) {
+    }
+
+    @Override
+    public int getStrength() {
+        return super.getStrength();
+    }
+    @Override
+    public void interactNeighbors(ArrayList<Cell> neighbors) {
+        int deadCellCount = 0;
+        int tissueCellCount = 0;
+        int immuneCellCount = 0;
+
+        for (Cell neighbor : neighbors) {
+            if (neighbor instanceof DeadCell) {
+                deadCellCount++;
+            } else if (neighbor instanceof TissueCell) {
+                tissueCellCount++;
+            } else if (neighbor instanceof ImmuneCell) {
+                immuneCellCount++;
+            }
+        }
+
+        if (deadCellCount > 0) {
+            int index = random.nextInt(neighbors.size());
+            Cell chosenNeighbor = neighbors.get(index);
+            int x = chosenNeighbor.getX();
+            int y = chosenNeighbor.getY();
+            neighbors.set(index, new CancerCell(x, y));
+        } else if (tissueCellCount > immuneCellCount && tissueCellCount > 0) {
+            int index = random.nextInt(neighbors.size());
+            Cell chosenNeighbor = neighbors.get(index);
+            int x = chosenNeighbor.getX();
+            int y = chosenNeighbor.getY();
+            neighbors.set(index, new DeadCell(x, y));
+        } else if (immuneCellCount > 0) {
+            for (Cell neighbor : neighbors) {
+                if (neighbor instanceof ImmuneCell) {
+                    ((ImmuneCell) neighbor).decreaseStrength();
+                    if (((ImmuneCell) neighbor).getStrength() <= 0) {
+                        int x = neighbor.getX();
+                        int y = neighbor.getY();
+                        neighbors.set(neighbors.indexOf(neighbor), new DeadCell(x, y));
+                    }
+                    break; // Attack only one ImmuneCell in this iteration
+                }
+            }
+        }
+    }
 }

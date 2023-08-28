@@ -2,6 +2,7 @@ package Simulation;
 
 
 import Util.Pair;
+import java.util.ArrayList;
 
 /**
  * This cell is dead and does nothing
@@ -15,6 +16,13 @@ public class DeadCell extends Cell{
      */
     public DeadCell(Pair coords){
 
+    }
+    public DeadCell(int x, int y){
+        super(x, y, 0, 0, "DeadCell");
+    }
+    @Override
+    public void interactNeighbors(ArrayList<Cell> neighbors) {
+        // DeadCell does nothing in its interaction
     }
 
 }
