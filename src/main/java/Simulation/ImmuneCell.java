@@ -37,19 +37,22 @@ public class ImmuneCell extends Cell{
     }
     @Override
     public void interactNeighbors(ArrayList<Cell> neighbors) {
+        int cancerCellCount = 0;
         for (Cell neighbor : neighbors) {
-            System.out.println("Checking neighbor: " + neighbor.getClass().getSimpleName());
-            if (random.nextDouble() < ATTACK_CHANCE) {
-                System.out.println("Attacking CancerCell!");
-                int x = neighbor.getX();
-                int y = neighbor.getY();
-                neighbors.set(neighbors.indexOf(neighbor), new DeadCell(x, y));
-                // Optional: 50% chance of attacking again
-                if (random.nextDouble() < 0.5) {
-                    System.out.println("Attacking again!");
-                    interactNeighbors(neighbors); // Recursive call for multiple attacks
-                }
-                break; // Attack only one CancerCell in this iteration
+            if (neighbor instanceof CancerCell) {
+                cancerCellCount++;
+            }
+        }
+        if (cancerCellCount > 0) {
+
+            int index = random.nextInt(neighbors.size());
+            Cell chosenNeighbor = neighbors.get(index);
+            int x = chosenNeighbor.getX();
+            int y = chosenNeighbor.getY();
+            neighbors.set(index, new DeadCell(x, y));
+            // Optional: 50% chance of attacking again
+            if (random.nextDouble() <= 0.5) {
+                interactNeighbors(neighbors); // Recursive call for multiple attacks
             }
         }
     }
