@@ -28,7 +28,6 @@ public class Logic {
         cellList = new ArrayList<>();
         initialize();
     }
-
     /**
      * Puts cells on the board.
      */

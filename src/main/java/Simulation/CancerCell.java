@@ -1,7 +1,6 @@
 package Simulation;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import Util.Pair;
 /**
@@ -18,22 +17,19 @@ import Util.Pair;
  */
 
 public class CancerCell extends Cell{
+
     public CancerCell(int x, int y){
         super(x, y, 1, 3, "CancerCell");
     }
     private Random random = new Random();
 
-    public CancerCell(Pair pair) {
-    }
     private int strength = getStrength();
 
-    public CancerCell(int x, int y, int strength) {
+    public CancerCell(Pair pair) {
+        super(pair.getX(), pair.getY(), 1, 3, "CancerCell");
     }
 
-    @Override
-    public int getStrength() {
-        return super.getStrength();
-    }
+
     @Override
     public void interactNeighbors(ArrayList<Cell> neighbors) {
         int deadCellCount = 0;

@@ -2,7 +2,6 @@ package Simulation;
 
 
 import Util.Pair;
-import Util.Calculator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,7 @@ public class TissueCell extends Cell{
      * @param coords
      */
     public TissueCell(Pair coords){
-
+        super(coords.getX(), coords.getY(), 3, 4, "TissueCell");
     }
     public TissueCell(int x, int y){
         super(x, y, 0, 1, "TissueCell");

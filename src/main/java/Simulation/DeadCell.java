@@ -15,11 +15,12 @@ public class DeadCell extends Cell{
      * @param coords
      */
     public DeadCell(Pair coords){
-
+        super(coords.getX(), coords.getY(), 3, 4, "DeadCell");
     }
     public DeadCell(int x, int y){
         super(x, y, 0, 0, "DeadCell");
     }
+
     @Override
     public void interactNeighbors(ArrayList<Cell> neighbors) {
         // DeadCell does nothing in its interaction

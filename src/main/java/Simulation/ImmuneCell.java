@@ -16,10 +16,10 @@ public class ImmuneCell extends Cell{
      * See the Util folder and Pair.java to learn about the implementation of this
      * @param coords
      */
-    public ImmuneCell(Pair coords){
-
+    public ImmuneCell(Pair coords) {
+        super(coords.getX(), coords.getY(), 3, 4, "ImmuneCell");
     }
-    public ImmuneCell(int x, int y){
+    public ImmuneCell(int x, int y, Pair pair){
         super(x, y, 3, 4, "ImmuneCell");
     }
     private static final double ATTACK_CHANCE = 1.0; // 100% chance of attacking

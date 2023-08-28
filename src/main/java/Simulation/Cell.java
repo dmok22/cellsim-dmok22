@@ -1,5 +1,7 @@
 package Simulation;
 
+import Util.Pair;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +21,9 @@ public class Cell {
     private int x;
     private int y;
     private int id;
+    private Pair pair;
+    private int pairx;
+    private int pairy;
     private HashMap<String, Double> chemicals;
     private HashSet<String> signalMolecules;
     private String cellType;
@@ -32,6 +37,7 @@ public class Cell {
         this.chemicals = new HashMap<>();
         this.signalMolecules = new HashSet<>();
         this.neighbors = new ArrayList<>();
+
     }
 
     public Cell(int x, int y, int strength, int id, String cellType) {
@@ -56,6 +62,7 @@ public class Cell {
             this.id = 0;
         }
         this.cellType = cellType;
+
     }
 
     public void addChemical(String chemical, double concentration) {
