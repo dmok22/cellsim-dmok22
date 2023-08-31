@@ -9,23 +9,25 @@ import java.util.Random;
  * The immune cell! It kills cancer, and has a chance to attack multiple cancer cells per turn!
  */
 
-public class ImmuneCell extends Cell{
+public class ImmuneCell extends Cell {
 
     /**
      * The logic object expects a constructor that takes a coordinate stored as a pair
      * See the Util folder and Pair.java to learn about the implementation of this
+     *
      * @param coords
      */
     public ImmuneCell(Pair coords) {
         this(coords.getX(), coords.getY());
     }
-    public ImmuneCell(int x, int y){
+
+    public ImmuneCell(int x, int y) {
         super(x, y, 3, 4, "ImmuneCell");
     }
+
     private static final double ATTACK_CHANCE = 1.0; // 100% chance of attacking
     private Random random = new Random();
     private int strength = 2; // Initial strength
-
 
 
     public int getStrength() {
@@ -35,10 +37,13 @@ public class ImmuneCell extends Cell{
     public void decreaseStrength() {
         strength--;
     }
+
     @Override
     public void interactNeighbors(ArrayList<Cell> neighbors) {
+        ArrayList<Cell> immediateNeighbors = new ArrayList<>();
+
         int cancerCellCount = 0;
-        for (Cell neighbor : neighbors) {
+        for (Cell neighbor : immediateNeighbors) {
             if (neighbor instanceof CancerCell) {
                 cancerCellCount++;
             }
@@ -56,4 +61,23 @@ public class ImmuneCell extends Cell{
             }
         }
     }
+    private ArrayList<Cell> getImmediateNeighbors(ArrayList<Cell> neighbors) {
+        ArrayList<Cell> immediateNeighbors = new ArrayList<>();
+
+        int centerX = getX();
+        int centerY = getY();
+
+        for (Cell neighbor : neighbors) {
+            int neighborX = neighbor.getX();
+            int neighborY = neighbor.getY();
+
+            // Check if the neighbor cell is within one cell distance in x and y directions
+            if (Math.abs(neighborX - centerX) <= 1 && Math.abs(neighborY - centerY) <= 1) {
+                immediateNeighbors.add(neighbor);
+            }
+        }
+
+        return immediateNeighbors;
+    }
 }
+

@@ -32,11 +32,12 @@ public class CancerCell extends Cell{
 
     @Override
     public void interactNeighbors(ArrayList<Cell> neighbors) {
+        ArrayList<Cell> immediateNeighbors = getImmediateNeighbors(neighbors);
         int deadCellCount = 0;
         int tissueCellCount = 0;
         int immuneCellCount = 0;
 
-        for (Cell neighbor : neighbors) {
+        for (Cell neighbor : immediateNeighbors) {
             if (neighbor instanceof DeadCell) {
                 deadCellCount++;
             } else if (neighbor instanceof TissueCell) {
@@ -59,7 +60,7 @@ public class CancerCell extends Cell{
             int y = chosenNeighbor.getY();
             neighbors.set(index, new DeadCell(x, y));
         } else if (immuneCellCount > 0) {
-            for (Cell neighbor : neighbors) {
+            for (Cell neighbor : immediateNeighbors) {
                 if (neighbor instanceof ImmuneCell) {
                     ((ImmuneCell) neighbor).decreaseStrength();
                     if (((ImmuneCell) neighbor).getStrength() <= 0) {
@@ -71,5 +72,24 @@ public class CancerCell extends Cell{
                 }
             }
         }
+    }
+
+    private ArrayList<Cell> getImmediateNeighbors(ArrayList<Cell> neighbors) {
+        ArrayList<Cell> immediateNeighbors = new ArrayList<>();
+
+        int centerX = getX();
+        int centerY = getY();
+
+        for (Cell neighbor : neighbors) {
+            int neighborX = neighbor.getX();
+            int neighborY = neighbor.getY();
+
+            // Check if the neighbor cell is within one cell distance in x and y directions
+            if (Math.abs(neighborX - centerX) <= 1 && Math.abs(neighborY - centerY) <= 1) {
+                immediateNeighbors.add(neighbor);
+            }
+        }
+
+        return immediateNeighbors;
     }
 }

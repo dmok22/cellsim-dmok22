@@ -23,7 +23,7 @@ public class DeadCell extends Cell{
 
     @Override
     public void interactNeighbors(ArrayList<Cell> neighbors) {
-        // DeadCell does nothing in its interaction
+        // DeadCell does nothing
     }
 
 }
