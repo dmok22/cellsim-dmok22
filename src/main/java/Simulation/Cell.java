@@ -1,10 +1,12 @@
 package Simulation;
 
+import Util.Calculator;
 import Util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Random;
 
 /**
  * The default, boring cell.
@@ -167,5 +169,15 @@ public class Cell {
     public void decreaseStrength() {
         strength--;
     }
+    private static final Random random = new Random();
 
+    protected int getRandomNeighborIndex(ArrayList<Cell> neighbors) {
+        int xOffset = random.nextInt(3) - 1; // Random offset (-1, 0, or 1)
+        int yOffset = random.nextInt(3) - 1;
+
+        int newX = x + xOffset;
+        int newY = y + yOffset;
+
+        return Calculator.indexFromCoord(newX, newY);
+    }
 }
