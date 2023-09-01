@@ -1,5 +1,6 @@
 package Simulation;
 
+import Util.Calculator;
 import Util.Pair;
 
 import java.util.ArrayList;
@@ -40,44 +41,53 @@ public class ImmuneCell extends Cell {
 
     @Override
     public void interactNeighbors(ArrayList<Cell> neighbors) {
-        ArrayList<Cell> immediateNeighbors = new ArrayList<>();
-
         int cancerCellCount = 0;
-        for (Cell neighbor : immediateNeighbors) {
-            if (neighbor instanceof CancerCell) {
-                cancerCellCount++;
-            }
-        }
-        if (cancerCellCount > 0) {
-
-            int index = random.nextInt(neighbors.size());
-            Cell chosenNeighbor = neighbors.get(index);
-            int x = chosenNeighbor.getX();
-            int y = chosenNeighbor.getY();
-            neighbors.set(index, new DeadCell(x, y));
-            // Optional: 50% chance of attacking again
-            if (random.nextDouble() <= 0.5) {
-                interactNeighbors(neighbors); // Recursive call for multiple attacks
-            }
-        }
-    }
-    private ArrayList<Cell> getImmediateNeighbors(ArrayList<Cell> neighbors) {
-        ArrayList<Cell> immediateNeighbors = new ArrayList<>();
 
         int centerX = getX();
         int centerY = getY();
 
-        for (Cell neighbor : neighbors) {
-            int neighborX = neighbor.getX();
-            int neighborY = neighbor.getY();
+        for (int xOffset = -1; xOffset <= 1; xOffset++) {
+            for (int yOffset = -1; yOffset <= 1; yOffset++) {
+                if (xOffset == 0 && yOffset == 0) {
+                    continue; // Skip the cell itself
+                }
 
-            // Check if the neighbor cell is within one cell distance in x and y directions
-            if (Math.abs(neighborX - centerX) <= 1 && Math.abs(neighborY - centerY) <= 1) {
-                immediateNeighbors.add(neighbor);
+                int neighborX = centerX + xOffset;
+                int neighborY = centerY + yOffset;
+
+                int neighborIndex = Calculator.indexFromCoord(neighborX, neighborY);
+
+                if (neighborIndex >= 0 && neighborIndex < neighbors.size() && neighbors.get(neighborIndex) instanceof CancerCell) {
+                    cancerCellCount++;
+                }
             }
         }
 
-        return immediateNeighbors;
-    }
-}
+        if (cancerCellCount > 0) {
+            while (true) {
+                int xOffset = random.nextInt(3) - 1; // Random offset (-1, 0, or 1)
+                int yOffset = random.nextInt(3) - 1;
 
+                if (xOffset == 0 && yOffset == 0) {
+                    continue; // Skip the cell itself
+                }
+
+                int newX = centerX + xOffset;
+                int newY = centerY + yOffset;
+
+                int newNeighborIndex = Calculator.indexFromCoord(newX, newY);
+
+                if (newNeighborIndex >= 0 && newNeighborIndex < neighbors.size() && neighbors.get(newNeighborIndex) instanceof CancerCell) {
+                    neighbors.set(newNeighborIndex, new DeadCell(newX, newY));
+
+                    // Optional: 50% chance of attacking again
+                    if (random.nextDouble() <= 0.5) {
+                        interactNeighbors(neighbors); // Recursive call for multiple attacks
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+}

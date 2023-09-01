@@ -2,6 +2,8 @@ package Simulation;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import Util.Calculator;
 import Util.Pair;
 /**
  *This is a cancer cell. It is the most complex cell as it can attack tissue or immune cells, or grow into a dead cell.
@@ -32,64 +34,101 @@ public class CancerCell extends Cell{
 
     @Override
     public void interactNeighbors(ArrayList<Cell> neighbors) {
-        ArrayList<Cell> immediateNeighbors = getImmediateNeighbors(neighbors);
         int deadCellCount = 0;
         int tissueCellCount = 0;
         int immuneCellCount = 0;
 
-        for (Cell neighbor : immediateNeighbors) {
-            if (neighbor instanceof DeadCell) {
-                deadCellCount++;
-            } else if (neighbor instanceof TissueCell) {
-                tissueCellCount++;
-            } else if (neighbor instanceof ImmuneCell) {
-                immuneCellCount++;
+        int centerX = getX();
+        int centerY = getY();
+
+        for (int xOffset = -1; xOffset <= 1; xOffset++) {
+            for (int yOffset = -1; yOffset <= 1; yOffset++) {
+                if (xOffset == 0 && yOffset == 0) {
+                    continue; // Skip the cell itself
+                }
+
+                int neighborX = centerX + xOffset;
+                int neighborY = centerY + yOffset;
+
+                int neighborIndex = Calculator.indexFromCoord(neighborX, neighborY);
+
+                if (neighborIndex >= 0 && neighborIndex < neighbors.size()) {
+                    Cell neighbor = neighbors.get(neighborIndex);
+
+                    if (neighbor instanceof DeadCell) {
+                        deadCellCount++;
+                    } else if (neighbor instanceof TissueCell) {
+                        tissueCellCount++;
+                    } else if (neighbor instanceof ImmuneCell) {
+                        immuneCellCount++;
+                    }
+                }
             }
         }
 
         if (deadCellCount > 0) {
-            int index = random.nextInt(neighbors.size());
-            Cell chosenNeighbor = neighbors.get(index);
-            int x = chosenNeighbor.getX();
-            int y = chosenNeighbor.getY();
-            neighbors.set(index, new CancerCell(x, y));
+            while (true) {
+                int xOffset = random.nextInt(3) - 1; // Random offset (-1, 0, or 1)
+                int yOffset = random.nextInt(3) - 1;
+
+                if (xOffset == 0 && yOffset == 0) {
+                    continue; // Skip the cell itself
+                }
+
+                int newX = centerX + xOffset;
+                int newY = centerY + yOffset;
+
+                int newNeighborIndex = Calculator.indexFromCoord(newX, newY);
+
+                if (newNeighborIndex >= 0 && newNeighborIndex < neighbors.size() && neighbors.get(newNeighborIndex) instanceof DeadCell) {
+                    neighbors.set(newNeighborIndex, new CancerCell(newX, newY));
+                    break;
+                }
+            }
         } else if (tissueCellCount > immuneCellCount && tissueCellCount > 0) {
-            int index = random.nextInt(neighbors.size());
-            Cell chosenNeighbor = neighbors.get(index);
-            int x = chosenNeighbor.getX();
-            int y = chosenNeighbor.getY();
-            neighbors.set(index, new DeadCell(x, y));
+            while (true) {
+                int xOffset = random.nextInt(3) - 1; // Random offset (-1, 0, or 1)
+                int yOffset = random.nextInt(3) - 1;
+
+                if (xOffset == 0 && yOffset == 0) {
+                    continue; // Skip the cell itself
+                }
+
+                int newX = centerX + xOffset;
+                int newY = centerY + yOffset;
+
+                int newNeighborIndex = Calculator.indexFromCoord(newX, newY);
+
+                if (newNeighborIndex >= 0 && newNeighborIndex < neighbors.size() && neighbors.get(newNeighborIndex) instanceof TissueCell) {
+                    neighbors.set(newNeighborIndex, new DeadCell(newX, newY));
+                    break;
+                }
+            }
         } else if (immuneCellCount > 0) {
-            for (Cell neighbor : immediateNeighbors) {
-                if (neighbor instanceof ImmuneCell) {
-                    ((ImmuneCell) neighbor).decreaseStrength();
-                    if (((ImmuneCell) neighbor).getStrength() <= 0) {
-                        int x = neighbor.getX();
-                        int y = neighbor.getY();
-                        neighbors.set(neighbors.indexOf(neighbor), new DeadCell(x, y));
+            while (true) {
+                int xOffset = random.nextInt(3) - 1; // Random offset (-1, 0, or 1)
+                int yOffset = random.nextInt(3) - 1;
+
+                if (xOffset == 0 && yOffset == 0) {
+                    continue; // Skip the cell itself
+                }
+
+                int newX = centerX + xOffset;
+                int newY = centerY + yOffset;
+
+                int newNeighborIndex = Calculator.indexFromCoord(newX, newY);
+
+                if (newNeighborIndex >= 0 && newNeighborIndex < neighbors.size() && neighbors.get(newNeighborIndex) instanceof ImmuneCell) {
+                    ImmuneCell immuneNeighbor = (ImmuneCell) neighbors.get(newNeighborIndex);
+                    immuneNeighbor.decreaseStrength();
+
+                    if (immuneNeighbor.getStrength() <= 0) {
+                        neighbors.set(newNeighborIndex, new DeadCell(newX, newY));
                     }
-                    break; // Attack only one ImmuneCell in this iteration
+                    break;
                 }
             }
         }
     }
 
-    private ArrayList<Cell> getImmediateNeighbors(ArrayList<Cell> neighbors) {
-        ArrayList<Cell> immediateNeighbors = new ArrayList<>();
-
-        int centerX = getX();
-        int centerY = getY();
-
-        for (Cell neighbor : neighbors) {
-            int neighborX = neighbor.getX();
-            int neighborY = neighbor.getY();
-
-            // Check if the neighbor cell is within one cell distance in x and y directions
-            if (Math.abs(neighborX - centerX) <= 1 && Math.abs(neighborY - centerY) <= 1) {
-                immediateNeighbors.add(neighbor);
-            }
-        }
-
-        return immediateNeighbors;
-    }
 }

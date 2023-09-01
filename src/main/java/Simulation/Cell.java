@@ -18,8 +18,8 @@ public class Cell {
      * @return
      */
     private int strength;
-    private int x;
-    private int y;
+    int x;
+    int y;
     private int id;
     private Pair pair;
     private int pairx;
@@ -39,7 +39,11 @@ public class Cell {
         this.neighbors = new ArrayList<>();
 
     }
-
+    public Cell(int x, int y, int strength) {
+        this.x = x;
+        this.y = y;
+        this.strength = strength;
+    }
     public Cell(int x, int y, int strength, int id, String cellType) {
         if (strength > 0){
             this.strength = strength;
@@ -158,6 +162,10 @@ public class Cell {
     public int getID(){
 
         return id;
+    }
+
+    public void decreaseStrength() {
+        strength--;
     }
 
 }

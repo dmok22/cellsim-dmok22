@@ -1,6 +1,6 @@
 package Simulation;
 
-
+import Util.Calculator;
 import Util.Pair;
 
 import java.util.ArrayList;
@@ -33,39 +33,48 @@ public class TissueCell extends Cell {
 
     @Override
     public void interactNeighbors(ArrayList<Cell> neighbors) {
-        ArrayList<Cell> immediateNeighbors = getImmediateNeighbors(neighbors);
-
         int deadCellCount = 0;
-        for (Cell neighbor : immediateNeighbors) {
-            if (neighbor instanceof DeadCell) {
-                deadCellCount++;
-            }
-        }
-
-        if (deadCellCount > 0 && random.nextDouble() < GROW_CHANCE) {
-            int index = random.nextInt(immediateNeighbors.size());
-            Cell chosenNeighbor = immediateNeighbors.get(index);
-            int x = chosenNeighbor.getX();
-            int y = chosenNeighbor.getY();
-            neighbors.set(neighbors.indexOf(chosenNeighbor), new TissueCell(x, y));
-        }
-    }
-    private ArrayList<Cell> getImmediateNeighbors(ArrayList<Cell> neighbors) {
-        ArrayList<Cell> immediateNeighbors = new ArrayList<>();
 
         int centerX = getX();
         int centerY = getY();
 
-        for (Cell neighbor : neighbors) {
-            int neighborX = neighbor.getX();
-            int neighborY = neighbor.getY();
+        for (int xOffset = -1; xOffset <= 1; xOffset++) {
+            for (int yOffset = -1; yOffset <= 1; yOffset++) {
+                if (xOffset == 0 && yOffset == 0) {
+                    continue; // Skip the cell itself
+                }
 
-            // Check if the neighbor cell is within one cell distance in x and y directions
-            if (Math.abs(neighborX - centerX) <= 1 && Math.abs(neighborY - centerY) <= 1) {
-                immediateNeighbors.add(neighbor);
+                int neighborX = centerX + xOffset;
+                int neighborY = centerY + yOffset;
+
+                int neighborIndex = Calculator.indexFromCoord(neighborX, neighborY);
+
+                if (neighborIndex >= 0 && neighborIndex < neighbors.size() && neighbors.get(neighborIndex) instanceof DeadCell) {
+                    deadCellCount++;
+                }
             }
         }
 
-        return immediateNeighbors;
+        if (deadCellCount > 0 && random.nextDouble() < 0.7) {
+            while (true) {
+                int xOffset = random.nextInt(3) - 1; // Random offset (-1, 0, or 1)
+                int yOffset = random.nextInt(3) - 1;
+
+                if (xOffset == 0 && yOffset == 0) {
+                    continue; // Skip the cell itself
+                }
+
+                int newX = centerX + xOffset;
+                int newY = centerY + yOffset;
+
+                int newNeighborIndex = Calculator.indexFromCoord(newX, newY);
+
+                if (newNeighborIndex >= 0 && newNeighborIndex < neighbors.size() && neighbors.get(newNeighborIndex) instanceof DeadCell) {
+                    neighbors.set(newNeighborIndex, new TissueCell(newX, newY));
+                    break;
+                }
+            }
+        }
     }
+
 }
