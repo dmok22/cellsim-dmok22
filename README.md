@@ -1,6 +1,6 @@
-# BMEG_Class_Project
-Big project for the BMEG kids
+# Cell Simulation Project
 
+# Legend:
 Green: Cancer
 
 Red: Tissue
