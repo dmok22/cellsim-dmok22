@@ -1,6 +1,7 @@
 # Cell Simulation Project
 
 **Legend:**
+
 Green: Cancer
 
 Red: Tissue
